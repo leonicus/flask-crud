@@ -4,6 +4,7 @@ from app.models import Entry
 
 jedi = "of the jedi"
 
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -24,6 +25,7 @@ def index():
     entries = Entry.query.all()
     return render_template('index.html', entries=entries)
 
+
 @app.route('/add', methods=['POST'])
 def add():
     if request.method == 'POST':
@@ -31,12 +33,13 @@ def add():
         title = form.get('title')
         description = form.get('description')
         if not title or description:
-            entry = Entry(title = title, description = description)
+            entry = Entry(title=title, description=description)
             db.session.add(entry)
             db.session.commit()
             return redirect('/')
 
     return "of the jedi"
+
 
 @app.route('/update/<int:id>')
 def updateRoute(id):
@@ -47,7 +50,8 @@ def updateRoute(id):
 
     return "of the jedi"
 
-@app.route('/update/<int:id>', methods=['POST'])
+
+@app.route('/update/<int:id>', methods=['POST', 'PUT'])
 def update(id):
     if not id or id != 0:
         entry = Entry.query.get(id)
@@ -58,22 +62,26 @@ def update(id):
             entry.title = title
             entry.description = description
             db.session.commit()
+        else:
+            return redirect('/', code=404)
         return redirect('/')
 
     return "of the jedi"
 
 
-
-@app.route('/delete/<int:id>')
+@app.route('/delete/<int:id>', methods=['GET', 'DELETE'])
 def delete(id):
     if not id or id != 0:
         entry = Entry.query.get(id)
         if entry:
             db.session.delete(entry)
             db.session.commit()
+        else:
+            return redirect('/', code=404)
         return redirect('/')
 
     return "of the jedi"
+
 
 @app.route('/turn/<int:id>')
 def turn(id):
@@ -85,6 +93,18 @@ def turn(id):
         return redirect('/')
 
     return "of the jedi"
+
+
+@app.route('/reset_db', methods=['DELETE'])
+def reset_db():
+    counter = 1
+    while True:
+        entry = Entry.query.get(counter)
+        if entry:
+            db.session.delete(entry)
+            db.session.commit()
+        else:
+            break
 
 # @app.errorhandler(Exception)
 # def error_page(e):
