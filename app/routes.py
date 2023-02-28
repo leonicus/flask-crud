@@ -97,14 +97,15 @@ def turn(id):
 
 @app.route('/reset_db', methods=['DELETE'])
 def reset_db():
-    counter = 1
-    while True:
-        entry = Entry.query.get(counter)
-        if entry:
+    try:
+        entries = Entry.query.all()
+        for entry in entries:
             db.session.delete(entry)
-            db.session.commit()
-        else:
-            break
+        db.session.commit()
+    except Exception as e:
+        return e
+    return redirect('/')
+
 
 # @app.errorhandler(Exception)
 # def error_page(e):
