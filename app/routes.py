@@ -1,10 +1,14 @@
+import logging
+
 from flask import render_template, request, redirect
 from app import app, db
 from app.models import Entry
 
 jedi = "of the jedi"
 
-
+logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s',
+                    level=logging.INFO,
+                    datefmt='%Y-%m-%d %H:%M:%S', filename="C:\\Temp\\flask.log", filemode="a")
 @app.route('/')
 @app.route('/index')
 def index():
@@ -103,7 +107,7 @@ def reset_db():
             db.session.delete(entry)
         db.session.commit()
     except Exception as e:
-        return e
+        logging.error(e,stack_info=True)
     return redirect('/')
 
 
