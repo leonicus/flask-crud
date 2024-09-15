@@ -8,7 +8,7 @@ jedi = "of the jedi"
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s',
                     level=logging.INFO,
-                    datefmt='%Y-%m-%d %H:%M:%S', filename="C:\\Temp\\flask.log", filemode="a")
+                    datefmt='%Y-%m-%d %H:%M:%S', filename="C:\\tmp\\flask.log", filemode="a")
 @app.route('/')
 @app.route('/index')
 def index():
@@ -26,8 +26,11 @@ def index():
     #         'status': False
     #     }
     # ]
-    entries = Entry.query.all()
-    return render_template('index.html', entries=entries)
+    try:
+        entries = Entry.query.all()
+        return render_template('index.html', entries=entries)
+    except Exception as e :
+        logging.error(f'failed with {e}', stack_info=True)
 
 
 @app.route('/add', methods=['POST'])
